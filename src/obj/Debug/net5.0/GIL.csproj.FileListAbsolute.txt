@@ -1,0 +1,16 @@
+D:\Development\Genetics\GIL\bin\Debug\net5.0\GIL.exe
+D:\Development\Genetics\GIL\bin\Debug\net5.0\GIL.deps.json
+D:\Development\Genetics\GIL\bin\Debug\net5.0\GIL.runtimeconfig.json
+D:\Development\Genetics\GIL\bin\Debug\net5.0\GIL.runtimeconfig.dev.json
+D:\Development\Genetics\GIL\bin\Debug\net5.0\GIL.dll
+D:\Development\Genetics\GIL\bin\Debug\net5.0\ref\GIL.dll
+D:\Development\Genetics\GIL\bin\Debug\net5.0\GIL.pdb
+D:\Development\Genetics\GIL\obj\Debug\net5.0\GIL.csprojAssemblyReference.cache
+D:\Development\Genetics\GIL\obj\Debug\net5.0\GIL.GeneratedMSBuildEditorConfig.editorconfig
+D:\Development\Genetics\GIL\obj\Debug\net5.0\GIL.AssemblyInfoInputs.cache
+D:\Development\Genetics\GIL\obj\Debug\net5.0\GIL.AssemblyInfo.cs
+D:\Development\Genetics\GIL\obj\Debug\net5.0\GIL.csproj.CoreCompileInputs.cache
+D:\Development\Genetics\GIL\obj\Debug\net5.0\GIL.dll
+D:\Development\Genetics\GIL\obj\Debug\net5.0\ref\GIL.dll
+D:\Development\Genetics\GIL\obj\Debug\net5.0\GIL.pdb
+D:\Development\Genetics\GIL\obj\Debug\net5.0\GIL.genruntimeconfig.cache
