@@ -1,6 +1,6 @@
 # GIL
 A collection of tools designed to simplify genetic engineering 
-**This is still early in development, the future of this project is unknown and built versions may be unstable. **
+**This is still early in development, the future of this project is unknown and built versions may be unstable**
 if you 
 
 Features:
