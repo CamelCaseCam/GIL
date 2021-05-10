@@ -1,17 +1,16 @@
 # Genetic-Intermediate-Language
-A low-level genetic programming language designed to simplify genetic engineering
+A collection of tools designed to simplify genetic engineering 
 **This is still early in development, the future of this project is unknown and built versions may be unstable**
 
 Features:
-* Automatically optimizes codons for target organism
+* Converts a sequence of amino acids to a DNA sequence optimized for the target organism
+
+Features currently in development:
+* Automatically generates RNAi to block specified metabolic pathways in the target organism (80% done)
+* Multiple optimization settings to control which genes get blocked (not started)
 
 Planned features:
-* Automatically adding promotors to output
 * User-created libraries
-* Importing genes from files
-
-Possible features (further down the road, if ever):
-* Built-in decompiler
 
 # How to use it
 ## Option 1: bulding from source
@@ -23,4 +22,5 @@ I reccomend adding the bin\Debug\net5.0 folder to PATH so you can access the GIL
 ### Commands:
 * compile - compiles the .gil file with the same name as the current directory (not fully implemented)
 * new - creates a new GIL project
+* build-pathway - converts a textual representation of a metabolic pathway into serialized Pathway object to reduce performance cost with large pathways
 * test - used for testing, will be removed later
