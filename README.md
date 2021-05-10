@@ -1,7 +1,7 @@
 # GIL
 A collection of tools designed to simplify genetic engineering 
 **This is still early in development, the future of this project is unknown and built versions may be unstable**. 
-if you want to contribute or see a preview of upcoming releases, check out the developer branch. 
+If you want to contribute or see a preview of upcoming releases, check out the developer branch. 
 
 Features:
 * Converts a sequence of amino acids to a DNA sequence optimized for the target organism
