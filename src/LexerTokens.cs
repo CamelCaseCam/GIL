@@ -12,6 +12,8 @@ public static class LexerTokens
 
     //Metadata
     public const string SETTARGET = "SETTARGET";
+    public const string BEGINREGION = "BEGINREGION";    //#region Name
+    public const string ENDREGION = "ENDREGION";    //#EndRegion
 
     //DNA
     public const string AMINOLETTER = "AMINOLETTER";    //single-letter representation of amino acid
@@ -29,6 +31,10 @@ public static class LexerTokens
             (@"(?<=/\*)[\s\S\n]+?(?=\*/)", COMMENT),
             (@"(?<=#target )[a-zA-Z]*", SETTARGET),
             (@"(?<=#Target )[a-zA-Z]*", SETTARGET),
+            (@"(?<=#region )[a-zA-Z]*", BEGINREGION),
+            (@"(?<=#Region )[a-zA-Z]*", BEGINREGION),
+            (@"#endRegion", ENDREGION),
+            (@"#EndRegion", ENDREGION),
             (@"(?<=#)EntryPoint", ENTRYPOINT),
             //(@"(?<=import )[\S]*", IMPORT),
             (@"(?<=%AminoSequence\{)[\w\W]*(?=\})", AMINOSEQUENCE),

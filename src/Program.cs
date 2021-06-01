@@ -6,9 +6,10 @@ namespace GIL
 {
     class Program
     {
-        const string Version = "0.1";
-        public static string DataPath;
+        public const string Version = "0.2";
+        public static string DataPath;    //Path to directory with binaries
         public static string Target = "";
+        public static CodonEncoding CurrentEncoding;
 
         static void Main(string[] args)
         {
@@ -41,7 +42,7 @@ namespace GIL
 
         static void Run(string[] args)
         {
-            var Files = Directory.GetFiles(Environment.CurrentDirectory, "*.gil");
+            var Files = Directory.GetFiles(Environment.CurrentDirectory, "*.gil");    //compile first .gil file in directory
             if (Files.Length == 0)
             {
                 HelperFunctions.WriteError("No GIL project (.gil) in current directory.");
@@ -52,7 +53,7 @@ namespace GIL
             }
         }
 
-        static void New(string[] args)
+        static void New(string[] args)    //wip
         {
             if (args.Length < 2)
             {
@@ -71,10 +72,19 @@ namespace GIL
             }
             HelperFunctions.WriteError($"Template {args[1]} not found");
         }
-
+        
+        static GBSequence GBS = new GBSequence() {
+            Bases = "ATGTTTTAG",
+            Target = "Saccharomyces cerevisiae",
+            FileName = "Test.gil",
+            Features = new Feature[] {
+                new Feature("Start codon", 1, 3),
+                new Feature("Stop codon", 7, 9)
+            }
+        };
         static void Test(string[] args)
         {
-            LoadPathway.Load(args[1]);
+            Console.Write(GBS);
         }
     }
 }
