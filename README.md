@@ -5,13 +5,14 @@ If you want to contribute or see a preview of upcoming releases, check out the d
 
 Features:
 * Converts a sequence of amino acids to a DNA sequence optimized for the target organism
+* Translates proteins from one organism to another
 
 Features currently in development:
 * Automatically generates RNAi to block specified metabolic pathways in the target organism (80% done)
-* Multiple optimization settings to control which genes get blocked (not started)
 
 Planned features:
 * User-created libraries
+* Ability to link to user-created dlls
 
 # How to use it
 ## Option 1: bulding from source
