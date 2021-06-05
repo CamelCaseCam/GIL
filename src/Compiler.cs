@@ -55,7 +55,7 @@ public class Compiler
 
     public void Compile(string path)
     {
-        string program = File.ReadAllText(path).Replace("\r", "");
+        string program = File.ReadAllText(path).Replace("\r", "").Replace("    ", "\t").Replace("\t", "");
         List<Token> FileTokens = LexerTokens.Lexer.Tokenize(program);
         Project CurrentProject = Parser.Parse(FileTokens);
         string[] Splited = path.Split(new string[] { "/\\" }, StringSplitOptions.None);

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 public static class LexerTokens
 {
+    public static readonly string[] ReservedNames = new string[] {
+        "AminoSequence"
+    };
+
     //Meta-tokens
     //public const string IMPORT = "IMPORT";    //import other projects
     public const string IDENT = "IDENT";
@@ -37,7 +41,8 @@ public static class LexerTokens
             (@"#EndRegion", ENDREGION),
             (@"(?<=#)EntryPoint", ENTRYPOINT),
             //(@"(?<=import )[\S]*", IMPORT),
-            (@"(?<=%AminoSequence\{)[\w\W]*(?=\})", AMINOSEQUENCE),
+            (@"(?<=AminoSequence\{)[\w\W]*(?=\})", AMINOSEQUENCE),
+            (@"(?<=AminoSequence\n\{)[\w\W]*(?=\})", AMINOSEQUENCE),
 
             (@"\{", BEGIN),
             (@"\}", END),

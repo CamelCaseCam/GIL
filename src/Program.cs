@@ -6,7 +6,7 @@ namespace GIL
 {
     class Program
     {
-        public const string Version = "0.2";
+        public const string Version = "0.2.1";
         public static string DataPath;    //Path to directory with binaries
         public static string Target = "";
         public static CodonEncoding CurrentEncoding;
