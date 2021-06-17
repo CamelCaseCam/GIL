@@ -6,7 +6,7 @@ namespace GIL
 {
     class Program
     {
-        public const string Version = "0.2.1";
+        public const string Version = "0.2.3";
         public static string DataPath;    //Path to directory with binaries
         public static string Target = "";
         public static CodonEncoding CurrentEncoding;
@@ -42,6 +42,20 @@ namespace GIL
 
         static void Run(string[] args)
         {
+            if (args.Length > 1)
+            {
+                if (args[1].Contains(':'))
+                {
+                    Console.WriteLine("Compiling GIL file at " + args[1]);
+                    new Compiler().Compile(args[1]);
+                } else
+                {
+                    string Path = Environment.CurrentDirectory + "\\" + args[1];
+                    Console.WriteLine("Compiling GIL file at " + Path);
+                    new Compiler().Compile(Path);
+                }
+                return;
+            }
             var Files = Directory.GetFiles(Environment.CurrentDirectory, "*.gil");    //compile first .gil file in directory
             if (Files.Length == 0)
             {

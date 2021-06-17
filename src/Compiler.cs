@@ -76,42 +76,42 @@ public class Compiler
         for (int i = 0; i < CurrentProject.Tokens.Count; i++)
         {
             Token CurrentToken = CurrentProject.Tokens[i];
-            switch (CurrentToken.TokenType)
-            {
-                case LexerTokens.CODON:
-                    code += CurrentToken.Value;
-                    break;
-                case LexerTokens.AMINOCODE:
-                    code += CurrentEncoding.GetCode(CurrentToken.Value);
-                    break;
-                case LexerTokens.AMINOLETTER:
-                    code += CurrentEncoding.GetLetter(CurrentToken.Value[0]);
-                    break;
-                case LexerTokens.AMINOSEQUENCE:
-                    foreach (char c in CurrentToken.Value)
-                    {
-                        if (c == '\n' || c == '\r' || c == ' ' || c == '\t')
+                switch (CurrentToken.TokenType)
+                {
+                    case LexerTokens.CODON:
+                        code += CurrentToken.Value;
+                        break;
+                    case LexerTokens.AMINOCODE:
+                        Console.WriteLine(CurrentToken.Value);
+                        break;
+                    case LexerTokens.AMINOLETTER:
+                        code += CurrentEncoding.GetLetter(CurrentToken.Value[0]);
+                        break;
+                    case LexerTokens.AMINOSEQUENCE:
+                        foreach (char c in CurrentToken.Value)
                         {
-                            continue;
+                            if (c == '\n' || c == '\r' || c == ' ' || c == '\t')
+                            {
+                                continue;
+                            }
+                            code += CurrentEncoding.GetLetter(c);
                         }
-                        code += CurrentEncoding.GetLetter(c);
-                    }
-                    break;
-                case LexerTokens.BEGINREGION:
-                    InProgressFeatures.Push(new Feature(CurrentToken.Value, code.Length + 1, -1));
-                    break;
-                case LexerTokens.ENDREGION:
-                    if (InProgressFeatures.Count == 0)
-                    {
-                        HelperFunctions.WriteError("TempError no region to end");
-                    }
-                    Feature EndedFeature = InProgressFeatures.Pop();
-                    EndedFeature.End = code.Length;
-                    Features.Add(EndedFeature);
-                    break;
-                default:
-                    break;
-            }
+                        break;
+                    case LexerTokens.BEGINREGION:
+                        InProgressFeatures.Push(new Feature(CurrentToken.Value, code.Length + 1, -1));
+                        break;
+                    case LexerTokens.ENDREGION:
+                        if (InProgressFeatures.Count == 0)
+                        {
+                            HelperFunctions.WriteError("TempError no region to end");
+                        }
+                        Feature EndedFeature = InProgressFeatures.Pop();
+                        EndedFeature.End = code.Length;
+                        Features.Add(EndedFeature);
+                        break;
+                    default:
+                        break;
+                }
         }
         return new GBSequence() {
             Features = Features.ToArray(),
