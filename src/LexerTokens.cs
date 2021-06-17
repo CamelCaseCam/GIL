@@ -41,8 +41,8 @@ public static class LexerTokens
             (@"#EndRegion", ENDREGION),
             (@"(?<=#)EntryPoint", ENTRYPOINT),
             //(@"(?<=import )[\S]*", IMPORT),
-            (@"(?<=AminoSequence\{)[\w\W]*(?=\})", AMINOSEQUENCE),
-            (@"(?<=AminoSequence\n\{)[\w\W]*(?=\})", AMINOSEQUENCE),
+            (@"(?<=AminoSequence \{)[^\}]*(?=\})", AMINOSEQUENCE),
+            (@"(?<=AminoSequence\n\{)[^\}]*(?=\})", AMINOSEQUENCE),
 
             (@"\{", BEGIN),
             (@"\}", END),
