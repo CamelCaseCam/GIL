@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 public static class LexerTokens
 {
-    public static readonly string[] ReservedNames = new string[] {
-        "AminoSequence"
+    public static readonly List<string> ReservedNames = new List<string>() {
+        "AminoSequence",
+        "sequence"
     };
 
     //Meta-tokens
@@ -18,6 +19,7 @@ public static class LexerTokens
     public const string SETTARGET = "SETTARGET";
     public const string BEGINREGION = "BEGINREGION";    //#region Name
     public const string ENDREGION = "ENDREGION";    //#EndRegion
+    public const string REFREGION = "REFREGION";
 
     //DNA
     public const string AMINOLETTER = "AMINOLETTER";    //single-letter representation of amino acid
@@ -29,17 +31,20 @@ public static class LexerTokens
 
     public const string AMINOSEQUENCE = "AMINOSEQUENCE";
 
+    public const string DEFINESEQUENCE = "DEFINESEQUENCE";
+
     public static readonly RegexLexer Lexer = new RegexLexer(
         new (string, string)[] {    //you can change these to translate GIL into different languages
             (@"//.*", COMMENT),
             (@"(?<=/\*)[\s\S\n]+?(?=\*/)", COMMENT),
             (@"(?<=#target )[a-zA-Z]*", SETTARGET),
             (@"(?<=#Target )[a-zA-Z]*", SETTARGET),
-            (@"(?<=#region )[a-zA-Z]*", BEGINREGION),
-            (@"(?<=#Region )[a-zA-Z]*", BEGINREGION),
-            (@"#endRegion", ENDREGION),
-            (@"#EndRegion", ENDREGION),
+            (@"(?<=#region )[a-zA-Z0-9_ ]*", BEGINREGION),
+            (@"(?<=#Region )[a-zA-Z0-9_ ]*", BEGINREGION),
+            (@"(?<=#endRegion)[a-zA-Z0-9_ ]*", ENDREGION),
+            (@"(?<=#EndRegion)[a-zA-Z0-9_ ]*", ENDREGION),
             (@"(?<=#)EntryPoint", ENTRYPOINT),
+            (@"(?<=sequence )[a-zA-Z0-9@*_-]*", DEFINESEQUENCE),
             //(@"(?<=import )[\S]*", IMPORT),
             (@"(?<=AminoSequence \{)[^\}]*(?=\})", AMINOSEQUENCE),
             (@"(?<=AminoSequence\n\{)[^\}]*(?=\})", AMINOSEQUENCE),
@@ -52,7 +57,7 @@ public static class LexerTokens
             (@"\n", NEWLINE),
             
             //must be last token so it's checked last
-            (@"(?<![\.@])(?<=\s)[a-zA-Z]{4,}", IDENT),
+            (@"(?<![\.@])(?<=\s|\n)[a-zA-Z0-9@*_-]{4,}", IDENT),
         }
     );
 }

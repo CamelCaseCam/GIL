@@ -18,14 +18,14 @@ namespace GIL
                 Console.WriteLine($"GIL compiler version {Version}");
                 return;
             }
-            DataPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            DataPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);    //Get path to binaries
 
             switch (args[0])
             {
                 case "compile":
                     Run(args);
                     break;
-                case "new":
+                case "new":    //create new GIL file
                     New(args);
                     break;
                 case "test":
@@ -44,11 +44,11 @@ namespace GIL
         {
             if (args.Length > 1)
             {
-                if (args[1].Contains(':'))
+                if (args[1].Contains(':'))    //If it's a full path to file
                 {
                     Console.WriteLine("Compiling GIL file at " + args[1]);
                     new Compiler().Compile(args[1]);
-                } else
+                } else    //relative path
                 {
                     string Path = Environment.CurrentDirectory + "\\" + args[1];
                     Console.WriteLine("Compiling GIL file at " + Path);
@@ -75,7 +75,7 @@ namespace GIL
                 return;
             }
 
-            if (File.Exists(DataPath + $"/Templates/{args[1]}.gil"))
+            if (File.Exists(DataPath + $"/Templates/{args[1]}.gil"))    //Copy file with same name from templates folder
             {
                 Console.WriteLine($"Loading template \"{args[1]}\"");
                 string Template = File.ReadAllText(DataPath + $"/Templates/{args[1]}.gil");
@@ -87,18 +87,9 @@ namespace GIL
             HelperFunctions.WriteError($"Template {args[1]} not found");
         }
         
-        static GBSequence GBS = new GBSequence() {
-            Bases = "ATGTTTTAG",
-            Target = "Saccharomyces cerevisiae",
-            FileName = "Test.gil",
-            Features = new Feature[] {
-                new Feature("Start codon", 1, 3),
-                new Feature("Stop codon", 7, 9)
-            }
-        };
         static void Test(string[] args)
         {
-            Console.Write(GBS);
+            return;
         }
     }
 }

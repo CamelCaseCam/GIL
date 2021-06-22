@@ -5,10 +5,12 @@ using System.Collections.Generic;
 
 public class Compiler
 {
+    public static Compiler ExecutingCompiler = null;
     public void CompileRaw(string path)
     {
+        ExecutingCompiler = this;
         string program = File.ReadAllText(path);
-        List<Token> FileTokens = LexerTokens.Lexer.Tokenize(program);
+        List<Token> FileTokens = LexerTokens.Lexer.OldTokenize(program);
         Project CurrentProject = Parser.Parse(FileTokens);
         
         string FileName = path.Substring(0, path.Length - 3) + "cgil";
@@ -55,69 +57,112 @@ public class Compiler
 
     public void Compile(string path)
     {
+        ExecutingCompiler = this;
         string program = File.ReadAllText(path).Replace("\r", "").Replace("    ", "\t").Replace("\t", "");
-        List<Token> FileTokens = LexerTokens.Lexer.Tokenize(program);
-        Project CurrentProject = Parser.Parse(FileTokens);
+        List<Token> FileTokens;
+        List<string> NamedTokens;
+        (FileTokens, NamedTokens) = LexerTokens.Lexer.Tokenize(program);
+
+        Project CurrentProject = Parser.Parse(FileTokens, NamedTokens);
+        CurrentProject.GetReusableElements(FileTokens);
         string[] Splited = path.Split(new string[] { "/\\" }, StringSplitOptions.None);
         
         string FileName = path.Substring(0, path.Length - 3) + "gb";
-        string Compiled = CompileGB(CurrentProject, Splited[Splited.Length - 1]);
+        string Compiled = CompileGB(CurrentProject, Splited[Splited.Length - 1]).ToString();
         File.WriteAllText(FileName, Compiled);
     }
 
-    string CompileGB(Project CurrentProject, string FileName)
+    public GBSequence CompileGB(Project CurrentProject, string FileName)
     {
         CodonEncoding CurrentEncoding = new CodonEncoding(CurrentProject.Target);
         GIL.Program.CurrentEncoding = CurrentEncoding;
         string code = "";
         List<Feature> Features = new List<Feature>();
         Stack<Feature> InProgressFeatures = new Stack<Feature>();
+        Dictionary<string, Feature> ReferencedRegions = new Dictionary<string, Feature>();
 
         for (int i = 0; i < CurrentProject.Tokens.Count; i++)
         {
             Token CurrentToken = CurrentProject.Tokens[i];
-                switch (CurrentToken.TokenType)
-                {
-                    case LexerTokens.CODON:
-                        code += CurrentToken.Value;
-                        break;
-                    case LexerTokens.AMINOCODE:
-                        Console.WriteLine(CurrentToken.Value);
-                        break;
-                    case LexerTokens.AMINOLETTER:
-                        code += CurrentEncoding.GetLetter(CurrentToken.Value[0]);
-                        break;
-                    case LexerTokens.AMINOSEQUENCE:
-                        foreach (char c in CurrentToken.Value)
+            switch (CurrentToken.TokenType)
+            {
+                case LexerTokens.CODON:
+                    code += CurrentToken.Value;
+                    break;
+                case LexerTokens.AMINOCODE:
+                    break;
+                case LexerTokens.AMINOLETTER:
+                    code += CurrentEncoding.GetLetter(CurrentToken.Value[0]);
+                    break;
+                case LexerTokens.IDENT:
+                    if (LexerTokens.ReservedNames.Contains(CurrentToken.Value))    //Check if token is a reserved name
+                    {
+                        continue;
+                    }
+
+                    if (!CurrentProject.Sequences.ContainsKey(CurrentToken.Value))    //Check if name has been defined
+                    {
+                        HelperFunctions.WriteError($"The name \"{CurrentToken.Value}\" does not exist");
+                    }
+                    Feature SequenceFeature = new Feature(CurrentToken.Value, code.Length, -1);
+                    (Feature[] features, string dna) = CurrentProject.Sequences[CurrentToken.Value].Get(i);
+                    
+                    foreach (Feature f in features)
+                    {
+                        Features.Add(f);
+                    }
+                    code += dna;
+                    SequenceFeature.End = code.Length;
+                    Features.Add(SequenceFeature);
+                    break;
+                case LexerTokens.AMINOSEQUENCE:
+                    foreach (char c in CurrentToken.Value)
+                    {
+                        if (c == '\n' || c == '\r' || c == ' ' || c == '\t')
                         {
-                            if (c == '\n' || c == '\r' || c == ' ' || c == '\t')
-                            {
-                                continue;
-                            }
-                            code += CurrentEncoding.GetLetter(c);
+                            continue;
                         }
-                        break;
-                    case LexerTokens.BEGINREGION:
-                        InProgressFeatures.Push(new Feature(CurrentToken.Value, code.Length + 1, -1));
-                        break;
-                    case LexerTokens.ENDREGION:
-                        if (InProgressFeatures.Count == 0)
+                        code += CurrentEncoding.GetLetter(c);
+                    }
+                    break;
+                case LexerTokens.BEGINREGION:
+                    InProgressFeatures.Push(new Feature(CurrentToken.Value, code.Length + 1, -1));
+                    break;
+                case LexerTokens.REFREGION:
+                    ReferencedRegions.Add(CurrentToken.Value, new Feature(CurrentToken.Value, code.Length + 1, -1));
+                    break;
+                case LexerTokens.ENDREGION:
+                    if (InProgressFeatures.Count == 0 && ReferencedRegions.Count == 0)
+                    {
+                        HelperFunctions.WriteError("TempError no region to end");
+                    }
+                    
+                    Feature EndedFeature;
+                    if (CurrentToken.Value != "" && CurrentToken.Value != " ")
+                    {
+                        if (!ReferencedRegions.ContainsKey(CurrentToken.Value))
                         {
-                            HelperFunctions.WriteError("TempError no region to end");
+                            HelperFunctions.WriteError($"TempError region \"{CurrentToken.Value}\" does not exist");
                         }
-                        Feature EndedFeature = InProgressFeatures.Pop();
-                        EndedFeature.End = code.Length;
-                        Features.Add(EndedFeature);
-                        break;
-                    default:
-                        break;
-                }
+                        EndedFeature = ReferencedRegions[CurrentToken.Value];
+                        ReferencedRegions.Remove(CurrentToken.Value);
+                    } else
+                    {
+                        EndedFeature = InProgressFeatures.Pop();
+                    }
+
+                    EndedFeature.End = code.Length;
+                    Features.Add(EndedFeature);
+                    break;
+                default:
+                    break;
+            }
         }
         return new GBSequence() {
             Features = Features.ToArray(),
             Target = CurrentProject.Target,
             FileName = FileName,
             Bases = code
-        }.ToString();
+        };
     }
 }
