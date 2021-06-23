@@ -1,0 +1,65 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "GIL",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#variables"
+		},
+		{
+			"include": "#prepro"
+		},
+		{
+			"include": "#ident"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.gil",
+				"match": "(AminoSequence|sequence|op)"
+			}]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"name":  "comment.block.gil",
+					"begin": "/\\*",
+					"end": "\\*/"
+				},
+				{
+					"name": "comment.line.double-slash",
+					"begin": "//",
+					"end": "\n"
+				}
+			]
+		},
+		"prepro": {
+			"patterns": [
+				{
+					"name": "meta.preprocessor",
+					"match": "#.*"
+				}
+			]
+		},
+		"ident": {
+			"patterns": [
+				{
+					"name": "entity.name.function",
+					"match": "(?<![\\.@])(?<=\\s|\\n)[a-zA-Z0-9@*_-]{4,}"
+				},
+				{
+					"name": "entity.name.function",
+					"match": "\\.[a-zA-Z0-9@*_-]{4,}"
+				}
+			]
+		}
+		
+	},
+	"scopeName": "source.gil"
+}
