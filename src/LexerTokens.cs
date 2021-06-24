@@ -5,7 +5,8 @@ public static class LexerTokens
 {
     public static readonly List<string> ReservedNames = new List<string>() {
         "AminoSequence",
-        "sequence"
+        "sequence",
+        "operation"
     };
 
     //Meta-tokens
@@ -32,6 +33,9 @@ public static class LexerTokens
     public const string AMINOSEQUENCE = "AMINOSEQUENCE";
 
     public const string DEFINESEQUENCE = "DEFINESEQUENCE";
+    public const string DEFOP = "DEFOP";
+    public const string INNERCODE = "INNERCODE";
+    public const string CALLOP = "CALLOP";
 
     public static readonly RegexLexer Lexer = new RegexLexer(
         new (string, string)[] {    //you can change these to translate GIL into different languages
@@ -45,15 +49,19 @@ public static class LexerTokens
             (@"(?<=#EndRegion)[a-zA-Z0-9_ ]*", ENDREGION),
             (@"(?<=#)EntryPoint", ENTRYPOINT),
             (@"(?<=sequence )[a-zA-Z0-9@*_-]*", DEFINESEQUENCE),
+            (@"(?<=operation )[a-zA-Z0-9@*_-]*", DEFOP),
+            (@"(?<=\$)innerCode", INNERCODE),
+            (@"(?<=\$)InnerCode", INNERCODE),
+            (@"(?<=\.)[a-zA-Z0-9@*_-]*", CALLOP),
             //(@"(?<=import )[\S]*", IMPORT),
             (@"(?<=AminoSequence \{)[^\}]*(?=\})", AMINOSEQUENCE),
             (@"(?<=AminoSequence\n\{)[^\}]*(?=\})", AMINOSEQUENCE),
 
             (@"\{", BEGIN),
             (@"\}", END),
-            (@"[ATCGatcg]{3}", CODON),
-            (@"(?<= )(gly|ala|val|leu|ile|met|pro|phe|trp|ser|thr|asn|gln|tyr|cys|lys|arg|his|asp|glu)(?= |\n)", AMINOCODE),
-            (@"(?<=\W)[g|a|v|l|i|m|p|f|w|s|t|n|q|y|c|k|r|h|d|e](?=\W)", AMINOLETTER),
+            (@"(?<=\s|\n)[ATCGatcg]{1,}(?=\s|\n)", CODON),
+            (@"(?=\s|\n)(gly|ala|val|leu|ile|met|pro|phe|trp|ser|thr|asn|gln|tyr|cys|lys|arg|his|asp|glu)(?<=\s|\n)", AMINOCODE),
+            (@"(?<=\W)[g|a|v|l|i|m|p|f|w|s|t|n|q|y|c|k|r|h|d|e|x](?=\W)", AMINOLETTER),
             (@"\n", NEWLINE),
             
             //must be last token so it's checked last

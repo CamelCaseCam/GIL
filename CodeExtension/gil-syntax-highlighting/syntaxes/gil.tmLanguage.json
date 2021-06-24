@@ -22,7 +22,7 @@
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.gil",
-				"match": "(AminoSequence|sequence|op)"
+				"match": "(AminoSequence|sequence|operation)"
 			}]
 		},
 		"comments": {
@@ -54,7 +54,7 @@
 					"match": "(?<![\\.@])(?<=\\s|\\n)[a-zA-Z0-9@*_-]{4,}"
 				},
 				{
-					"name": "entity.name.function",
+					"name": "entity.name.type",
 					"match": "\\.[a-zA-Z0-9@*_-]{4,}"
 				}
 			]

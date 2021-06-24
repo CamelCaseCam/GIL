@@ -115,6 +115,36 @@ public class Compiler
                     SequenceFeature.End = code.Length;
                     Features.Add(SequenceFeature);
                     break;
+                case LexerTokens.CALLOP:
+                    if (LexerTokens.ReservedNames.Contains(CurrentToken.Value))    //Check if token is a reserved name
+                    {
+                        continue;
+                    }
+
+                    if (!CurrentProject.Operations.ContainsKey(CurrentToken.Value))    //Check if name has been defined
+                    {
+                        HelperFunctions.WriteError($"The name \"{CurrentToken.Value}\" does not exist");
+                    }
+                    Feature OpFeature = new Feature(CurrentToken.Value, code.Length, -1);
+
+                    List<Token> InsideTokens;
+                    (i, InsideTokens) = CurrentProject.GetInsideTokens(CurrentProject.Tokens.ToArray(), i + 1);
+                    Project InOp = CurrentProject.Copy();
+                    InOp.Tokens = InsideTokens;
+                    RelativeFeature InnerCode = new RelativeFeature(CompileGB(InOp, ""));
+
+                    (features, dna) = CallOp.Call(CurrentProject.Operations[CurrentToken.Value], 
+                        InnerCode, code.Length);
+                    
+                    foreach (Feature f in features)
+                    {
+                        Features.Add(f);
+                    }
+                    code += dna;
+                    Console.WriteLine(code.Length);
+                    OpFeature.End = code.Length;
+                    Features.Add(OpFeature);
+                    break;
                 case LexerTokens.AMINOSEQUENCE:
                     foreach (char c in CurrentToken.Value)
                     {

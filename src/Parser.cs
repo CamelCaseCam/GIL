@@ -12,19 +12,16 @@ public static class Parser
         {
             switch (tokens[i].TokenType)
             {
-                case LexerTokens.ENTRYPOINT:
-                    Output.EntryPoint = i;
+                case LexerTokens.ENTRYPOINT:    //You can technically use #EntryPoint to start exeution at a specific location. 
+                    Output.EntryPoint = i;      //I'll probably remove this later, though
                     break;
-                case LexerTokens.SETTARGET:
+                case LexerTokens.SETTARGET:    //sets target organism. In the future, I'll add support for multiple targets
                     Output.Target = tokens[i].Value;
-                    break;
-                case LexerTokens.IDENT:
-                    //To be implemented
                     break;
                 case LexerTokens.COMMENT:
                     //Do nothing since it's a comment
                     break;
-                case LexerTokens.BEGIN:
+                case LexerTokens.BEGIN:    //{
                     if (tokens.Count - 1 == i)
                     {
                         HelperFunctions.WriteError("ERROR: End token ('}') expected");
@@ -33,10 +30,9 @@ public static class Parser
                     {
                         Output.Tokens.Add(tokens[i + 1]);
                         i++;
+                        break;
                     }
-                    break;
-                case LexerTokens.END:
-                    //To be implemented
+                    Output.Tokens.Add(tokens[i]);
                     break;
                 default:
                     Output.Tokens.Add(tokens[i]);
@@ -60,6 +56,9 @@ public static class Parser
                 case LexerTokens.DEFINESEQUENCE:
                     i = HelperFunctions.GetEnd(tokens, i + 1);
                     break;
+                case LexerTokens.DEFOP:
+                    i = HelperFunctions.GetEnd(tokens, i + 1);
+                    break;
                 case LexerTokens.SETTARGET:
                     Output.Target = tokens[i].Value;
                     break;
@@ -79,10 +78,8 @@ public static class Parser
                         Output.Tokens.Add(tokens[i + 1]);
                         i++;
                     }
-                    break;
-                case LexerTokens.END:
-                    //To be implemented
-                    break;
+                    Output.Tokens.Add(tokens[i]);    //I forgot that I didn't add this line and spent 2 days trying to 
+                    break;                           //figure out why operations weren't working
                 case LexerTokens.BEGINREGION:
                     if (ReferencedRegions.Contains(tokens[i].Value))
                     {
@@ -105,9 +102,15 @@ public class Project
 {
     public List<Token> Tokens = new List<Token>();
     public Dictionary<string, RelativeFeature> Sequences = new Dictionary<string, RelativeFeature>();
+    public Dictionary<string, RelativeFeature[]> Operations = new Dictionary<string, RelativeFeature[]>();
 
     public int EntryPoint;
     public string Target;
+
+    public Project Copy()
+    {
+        return new Project() {Sequences = this.Sequences, Operations = this.Operations, Target = this.Target};
+    }
 
     public override string ToString()
     {
@@ -130,10 +133,37 @@ public class Project
     {
         for (int i = 0; i < Tokens.Length; i++)
         {
+            List<Token> t;
+            string Name;
             switch (Tokens[i].TokenType)
             {
                 case LexerTokens.DEFINESEQUENCE:
-                    i = GetSequence(Tokens, i + 1, Tokens[i].Value);
+                    Name = Tokens[i].Value;
+                    if (Sequences.ContainsKey(Name))
+                    {
+                        break;
+                    }
+                    (i, t) = GetInsideTokens(Tokens, i + 1);
+                    AddSequence(t, Name);
+                    break;
+                default:
+                    continue;
+            }
+        }
+        for (int i = 0; i < Tokens.Length; i++)
+        {
+            List<Token> t;
+            string Name;
+            switch (Tokens[i].TokenType)
+            {
+                case LexerTokens.DEFOP:
+                    Name = Tokens[i].Value;
+                    if (Sequences.ContainsKey(Name))
+                    {
+                        break;
+                    }
+                    (i, t) = GetInsideTokens(Tokens, i + 1);
+                    AddOp(t, Name);
                     break;
                 default:
                     continue;
@@ -141,7 +171,7 @@ public class Project
         }
     }
 
-    int GetSequence(Token[] Tokens, int idx, string name)
+    public (int, List<Token>) GetInsideTokens(Token[] Tokens, int idx)
     {
         int Layer = 0;
         List<Token> InsideTokens = new List<Token>();
@@ -158,18 +188,20 @@ public class Project
                     break;
                 case LexerTokens.NEWLINE:
                     continue;
+                case LexerTokens.COMMENT:
+                    continue;
                 default:
                     break;
             }
             if (Layer <= 0)
             {
-                AddSequence(InsideTokens, name);
-                return i;
+                //AddSequence(InsideTokens, name);
+                return (i, InsideTokens);
             }
         }
 
-        AddSequence(InsideTokens, name);
-        return Tokens.Length;
+        //AddSequence(InsideTokens, name);
+        return (Tokens.Length, InsideTokens);
     }
 
     void AddSequence(List<Token> tokens, string name)
@@ -177,5 +209,35 @@ public class Project
         Project InSequence = new Project() {Tokens = tokens, Sequences = this.Sequences, Target = this.Target};
         
         Sequences.Add(name, new RelativeFeature(Compiler.ExecutingCompiler.CompileGB(InSequence, "")));
+    }
+
+    void AddOp(List<Token> tokens, string name)
+    {
+        List<List<Token>> Feats = new List<List<Token>>() {
+            new List<Token>()
+        };
+        int CurrentFeat = 0;
+        foreach (Token t in tokens)
+        {
+            switch (t.TokenType)
+            {
+                case LexerTokens.INNERCODE:
+                    Feats.Add(new List<Token>());
+                    CurrentFeat++;
+                    break;
+                default:
+                    Feats[CurrentFeat].Add(t);
+                    break;
+            }
+        }
+        
+        RelativeFeature[] RelativeFeatures = new RelativeFeature[Feats.Count];
+        for (int i = 0; i < Feats.Count; i++)
+        {
+            Project InSequence = new Project() {Tokens = Feats[i], Sequences = this.Sequences, Target = this.Target};
+            
+            RelativeFeatures[i] = new RelativeFeature(Compiler.ExecutingCompiler.CompileGB(InSequence, ""));
+        }
+        Operations.Add(name, RelativeFeatures);
     }
 }

@@ -87,9 +87,9 @@ namespace GIL
             HelperFunctions.WriteError($"Template {args[1]} not found");
         }
         
-        static void Test(string[] args)
+        static void Test(string[] args)    //just for testing
         {
-            return;
+            
         }
     }
 }

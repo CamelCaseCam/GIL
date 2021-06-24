@@ -20,6 +20,10 @@ public class GBSequence
                         $"                     /organism=\"{Target}\"\n";
         for (int i = 0; i < Features.Length; i++)
         {
+            if (Features[i] == null)
+            {
+                continue;
+            }
             Output += Features[i].ToString();
         }
         Output += "\n" + GetBases() + "//";

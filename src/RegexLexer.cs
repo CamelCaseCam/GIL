@@ -8,7 +8,7 @@ public class RegexLexer
 {
     public RegexLexer((string, string)[] patterns)
     {
-        foreach (var item in patterns)
+        foreach (var item in patterns)    //add string tuple to patterns list as token pattern
         {
             Patterns.Add(new TokenPattern(item.Item1, item.Item2));
         }
@@ -64,12 +64,12 @@ public class RegexLexer
     {
         int CurrentIdx = 0;
         List<Token> Output = new List<Token>();
-        List<string> ReferencedRegions = new List<string>();
+        List<string> ReferencedRegions = new List<string>();    //so regions that are referenced by name can be stored seperately
         while (CurrentIdx < text.Length)
         {
             Match BestMatch = null;
             TokenPattern BestPattern = null;
-            foreach (TokenPattern pattern in Patterns)
+            foreach (TokenPattern pattern in Patterns)    //loop through patterns until you find the best match
             {
                 Match match = pattern.expression.Match(text, CurrentIdx);
                 if (BestMatch == null && match.Success)
@@ -78,13 +78,13 @@ public class RegexLexer
                     BestPattern = pattern;
                     continue;
                 }
-                if (match.Success && match.Index < BestMatch.Index)
+                if (match.Success && match.Index < BestMatch.Index)    //best match is match that begins closest to current position
                 {
                     BestMatch = match;
                     BestPattern = pattern;
                 }
             }
-            if (BestMatch == null) { break; }
+            if (BestMatch == null) { break; }    //exit once there's no more matches
 
             if (BestPattern.Value == LexerTokens.ENDREGION && BestMatch.Value != "" && BestMatch.Value[0] != '#')
             {
@@ -95,10 +95,10 @@ public class RegexLexer
             }
 
             Output.Add(new Token(BestPattern.Value, BestMatch.Value));
-            CurrentIdx = BestMatch.Index + BestMatch.Length;
+            CurrentIdx = BestMatch.Index + BestMatch.Length;    //jump to start of best match + length
             if (BestMatch.Length == 0)
             {
-                CurrentIdx++;
+                CurrentIdx++;    //if the match's length is 0, move forward by 1 to prevent infinite loops
             }
         }
         return (Output, ReferencedRegions);
