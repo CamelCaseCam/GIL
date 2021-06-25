@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -88,6 +89,16 @@ public static class Parser
                     {
                         Output.Tokens.Add(tokens[i]);
                     }
+                    break;
+                case LexerTokens.IMPORT:
+                    string LibPath = LibFuncs.GetLibPath(tokens[i].Value);
+                    Compiler.ExecutingCompiler = new Compiler();
+
+                    string program = File.ReadAllText(LibPath).Replace("\r", "").Replace("    ", "\t").Replace("\t", "");
+                    List<Token> FileTokens;
+                    List<string> NamedTokens;
+                    (FileTokens, NamedTokens) = LexerTokens.Lexer.Tokenize(program);
+                    Output.GetReusableElements(FileTokens);
                     break;
                 default:
                     Output.Tokens.Add(tokens[i]);

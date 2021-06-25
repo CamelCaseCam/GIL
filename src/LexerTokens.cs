@@ -6,11 +6,12 @@ public static class LexerTokens
     public static readonly List<string> ReservedNames = new List<string>() {
         "AminoSequence",
         "sequence",
-        "operation"
+        "operation",
+        "import"
     };
 
     //Meta-tokens
-    //public const string IMPORT = "IMPORT";    //import other projects
+    public const string IMPORT = "IMPORT";    //import other projects
     public const string IDENT = "IDENT";
     public const string NEWLINE = "NEWLINE";
     public const string COMMENT = "COMMENT";
@@ -53,7 +54,7 @@ public static class LexerTokens
             (@"(?<=\$)innerCode", INNERCODE),
             (@"(?<=\$)InnerCode", INNERCODE),
             (@"(?<=\.)[a-zA-Z0-9@*_-]*", CALLOP),
-            //(@"(?<=import )[\S]*", IMPORT),
+            (@"(?<=import ).*", IMPORT),
             (@"(?<=AminoSequence \{)[^\}]*(?=\})", AMINOSEQUENCE),
             (@"(?<=AminoSequence\n\{)[^\}]*(?=\})", AMINOSEQUENCE),
 

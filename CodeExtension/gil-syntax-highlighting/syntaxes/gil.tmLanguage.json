@@ -22,7 +22,7 @@
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.gil",
-				"match": "(AminoSequence|sequence|operation)"
+				"match": "(AminoSequence|sequence|operation|import|using)"
 			}]
 		},
 		"comments": {

@@ -141,7 +141,6 @@ public class Compiler
                         Features.Add(f);
                     }
                     code += dna;
-                    Console.WriteLine(code.Length);
                     OpFeature.End = code.Length;
                     Features.Add(OpFeature);
                     break;
