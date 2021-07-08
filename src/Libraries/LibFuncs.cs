@@ -3,14 +3,14 @@ using System.IO;
 
 public static class LibFuncs
 {
-    public static string GetLibPath(string path, string end = "gil")
+    public static string GetLibPath(string path, string end = ".gil")
     {
         if (path.Contains(':'))
         {
             return path;
         } else 
         {
-            string LibEnd = $"\\{path}.{end}";
+            string LibEnd = $"\\{path}{end}";
             string InDir = Environment.CurrentDirectory + LibEnd;
             string Lib = GIL.Program.DataPath + "\\Libraries" + LibEnd;
             

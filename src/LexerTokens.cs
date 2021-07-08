@@ -7,11 +7,13 @@ public static class LexerTokens
         "AminoSequence",
         "sequence",
         "operation",
-        "import"
+        "import", 
+        "using"
     };
 
     //Meta-tokens
     public const string IMPORT = "IMPORT";    //import other projects
+    public const string USING = "USING";    //link to outside dlls
     public const string IDENT = "IDENT";
     public const string NEWLINE = "NEWLINE";
     public const string COMMENT = "COMMENT";
@@ -40,7 +42,7 @@ public static class LexerTokens
 
     public static readonly RegexLexer Lexer = new RegexLexer(
         new (string, string)[] {    //you can change these to translate GIL into different languages
-            (@"//.*", COMMENT),
+            (@"//[^\n]*", COMMENT),
             (@"(?<=/\*)[\s\S\n]+?(?=\*/)", COMMENT),
             (@"(?<=#target )[a-zA-Z]*", SETTARGET),
             (@"(?<=#Target )[a-zA-Z]*", SETTARGET),
@@ -55,6 +57,7 @@ public static class LexerTokens
             (@"(?<=\$)InnerCode", INNERCODE),
             (@"(?<=\.)[a-zA-Z0-9@*_-]*", CALLOP),
             (@"(?<=import ).*", IMPORT),
+            (@"(?<=using ).*", USING),
             (@"(?<=AminoSequence \{)[^\}]*(?=\})", AMINOSEQUENCE),
             (@"(?<=AminoSequence\n\{)[^\}]*(?=\})", AMINOSEQUENCE),
 

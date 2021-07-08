@@ -35,13 +35,17 @@ public static class HelperFunctions
                 case LexerTokens.BEGIN:
                     Depth++;
                     break;
-                case LexerTokens.NEWLINE:
-                    continue;
-                case LexerTokens.DEFINESEQUENCE:    //To prevent errors and possible infinite loops
-                    return i - 1;
                 case LexerTokens.END:
                     Depth--;
                     break;
+                case LexerTokens.NEWLINE:
+                    continue;
+                case LexerTokens.COMMENT:
+                    continue;
+                case LexerTokens.DEFINESEQUENCE:
+                    continue;
+                case LexerTokens.DEFOP:
+                    continue;
                 default:
                     break;
             }

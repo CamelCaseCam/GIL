@@ -25,7 +25,7 @@ public static class Parser
                 case LexerTokens.BEGIN:    //{
                     if (tokens.Count - 1 == i)
                     {
-                        HelperFunctions.WriteError("ERROR: End token ('}') expected");
+                        HelperFunctions.WriteError("Error GIL05: End token (\"}\") expected");
                     }
                     if (tokens[i + 1].TokenType == LexerTokens.AMINOSEQUENCE)
                     {
@@ -72,7 +72,7 @@ public static class Parser
                 case LexerTokens.BEGIN:
                     if (tokens.Count - 1 == i)
                     {
-                        HelperFunctions.WriteError("ERROR: End token ('}') expected");
+                        HelperFunctions.WriteError("Error GIL05: End token (\"}\") expected");
                     }
                     if (tokens[i + 1].TokenType == LexerTokens.AMINOSEQUENCE)
                     {
@@ -82,7 +82,7 @@ public static class Parser
                     Output.Tokens.Add(tokens[i]);    //I forgot that I didn't add this line and spent 2 days trying to 
                     break;                           //figure out why operations weren't working
                 case LexerTokens.BEGINREGION:
-                    if (ReferencedRegions.Contains(tokens[i].Value))
+                    if (ReferencedRegions.Contains(tokens[i].Value))    //If this reference is closed by name, change the token type to REFREGION
                     {
                         Output.Tokens.Add(new Token(LexerTokens.REFREGION, tokens[i].Value));
                     } else
@@ -91,14 +91,18 @@ public static class Parser
                     }
                     break;
                 case LexerTokens.IMPORT:
-                    string LibPath = LibFuncs.GetLibPath(tokens[i].Value);
+                    string LibPath = LibFuncs.GetLibPath(tokens[i].Value);    //find path to file
                     Compiler.ExecutingCompiler = new Compiler();
 
+                    //Get contents of file and tokenize it
                     string program = File.ReadAllText(LibPath).Replace("\r", "").Replace("    ", "\t").Replace("\t", "");
                     List<Token> FileTokens;
                     List<string> NamedTokens;
                     (FileTokens, NamedTokens) = LexerTokens.Lexer.Tokenize(program);
-                    Output.GetReusableElements(FileTokens);
+                    Output.GetReusableElements(FileTokens);    //Get all operations and sequences
+                    break;
+                case LexerTokens.USING:    //Link to specified assembly
+                    GetAssembly.Get(tokens[i].Value);
                     break;
                 default:
                     Output.Tokens.Add(tokens[i]);
@@ -140,7 +144,7 @@ public class Project
         GetReusableElements(Tokens.ToArray());
     }
 
-    public void GetReusableElements(Token[] Tokens)
+    public void GetReusableElements(Token[] Tokens)    //Get all sequences and operations
     {
         for (int i = 0; i < Tokens.Length; i++)
         {
@@ -201,6 +205,10 @@ public class Project
                     continue;
                 case LexerTokens.COMMENT:
                     continue;
+                case LexerTokens.DEFINESEQUENCE:
+                    continue;
+                case LexerTokens.DEFOP:
+                    continue;
                 default:
                     break;
             }
@@ -250,5 +258,37 @@ public class Project
             RelativeFeatures[i] = new RelativeFeature(Compiler.ExecutingCompiler.CompileGB(InSequence, ""));
         }
         Operations.Add(name, RelativeFeatures);
+    }
+
+    public void GetGraphReusableElements(List<Token> tokens)
+    {
+        GetGraphReusableElements(tokens.ToArray());
+    }
+
+    public void GetGraphReusableElements(Token[] tokens)
+    {
+        Dictionary<string, List<Token>> ReusableElements = new Dictionary<string, List<Token>>();
+
+        for (int i = 0; i < tokens.Length; i++)
+        {
+            switch (tokens[i].TokenType)
+            {
+                case LexerTokens.DEFOP:
+                    goto DefineSequence;
+                case LexerTokens.DEFINESEQUENCE:
+                    DefineSequence:
+                    List<Token> InsideTokens;
+                    (i, InsideTokens) = GetInsideTokens(tokens, i);
+                    ReusableElements.Add(tokens[i].Value, InsideTokens);
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        foreach (KeyValuePair<string, List<Token>> RE in ReusableElements)
+        {
+            
+        }
     }
 }

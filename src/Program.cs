@@ -6,7 +6,7 @@ namespace GIL
 {
     class Program
     {
-        public const string Version = "0.2.3";
+        public const string Version = "0.3.0";
         public static string DataPath;    //Path to directory with binaries
         public static string Target = "";
         public static CodonEncoding CurrentEncoding;
@@ -59,7 +59,7 @@ namespace GIL
             var Files = Directory.GetFiles(Environment.CurrentDirectory, "*.gil");    //compile first .gil file in directory
             if (Files.Length == 0)
             {
-                HelperFunctions.WriteError("No GIL project (.gil) in current directory.");
+                HelperFunctions.WriteError("Error GIL03: No GIL project (.gil) in current directory");
             } else 
             {
                 Console.WriteLine("Compiling " + Files[0]);
@@ -84,7 +84,7 @@ namespace GIL
                 File.WriteAllText(ProjectPath, Template);
                 return;
             }
-            HelperFunctions.WriteError($"Template {args[1]} not found");
+            HelperFunctions.WriteError($"Error GIL04: Project template \"{args[1]}\" not found");
         }
         
         static void Test(string[] args)    //just for testing

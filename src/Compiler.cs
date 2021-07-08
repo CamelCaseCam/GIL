@@ -120,14 +120,29 @@ public class Compiler
                     {
                         continue;
                     }
-
+                    
+                    List<Token> InsideTokens;
+                    Feature OpFeature;
                     if (!CurrentProject.Operations.ContainsKey(CurrentToken.Value))    //Check if name has been defined
                     {
+                        if (GetOp.Operations.Contains(CurrentToken.Value))
+                        {
+                            (i, InsideTokens) = CurrentProject.GetInsideTokens(CurrentProject.Tokens.ToArray(), i + 1);
+                            RelativeFeature RF = GetOp.Call(CurrentToken.Value, InsideTokens);
+
+                            if (RF == null)
+                            {
+                                continue;
+                            }
+
+                            (features, dna) = RF.Get(code.Length);
+                            OpFeature = new Feature(CurrentToken.Value, code.Length, -1);
+                            goto OpCalled;
+                        }
                         HelperFunctions.WriteError($"The name \"{CurrentToken.Value}\" does not exist");
                     }
-                    Feature OpFeature = new Feature(CurrentToken.Value, code.Length, -1);
+                    OpFeature = new Feature(CurrentToken.Value, code.Length, -1);
 
-                    List<Token> InsideTokens;
                     (i, InsideTokens) = CurrentProject.GetInsideTokens(CurrentProject.Tokens.ToArray(), i + 1);
                     Project InOp = CurrentProject.Copy();
                     InOp.Tokens = InsideTokens;
@@ -135,6 +150,8 @@ public class Compiler
 
                     (features, dna) = CallOp.Call(CurrentProject.Operations[CurrentToken.Value], 
                         InnerCode, code.Length);
+                    
+                    OpCalled:
                     
                     foreach (Feature f in features)
                     {
@@ -163,7 +180,7 @@ public class Compiler
                 case LexerTokens.ENDREGION:
                     if (InProgressFeatures.Count == 0 && ReferencedRegions.Count == 0)
                     {
-                        HelperFunctions.WriteError("TempError no region to end");
+                        HelperFunctions.WriteError("Error GIL01: No region to end");
                     }
                     
                     Feature EndedFeature;
@@ -171,7 +188,7 @@ public class Compiler
                     {
                         if (!ReferencedRegions.ContainsKey(CurrentToken.Value))
                         {
-                            HelperFunctions.WriteError($"TempError region \"{CurrentToken.Value}\" does not exist");
+                            HelperFunctions.WriteError($"Error GIL02: Region \"{CurrentToken.Value}\" does not exist");
                         }
                         EndedFeature = ReferencedRegions[CurrentToken.Value];
                         ReferencedRegions.Remove(CurrentToken.Value);
