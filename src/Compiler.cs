@@ -64,7 +64,7 @@ public class Compiler
         (FileTokens, NamedTokens) = LexerTokens.Lexer.Tokenize(program);
 
         Project CurrentProject = Parser.Parse(FileTokens, NamedTokens);
-        CurrentProject.GetReusableElements(FileTokens);
+        CurrentProject.GetGraphReusableElements(FileTokens);
         string[] Splited = path.Split(new string[] { "/\\" }, StringSplitOptions.None);
         
         string FileName = path.Substring(0, path.Length - 3) + "gb";

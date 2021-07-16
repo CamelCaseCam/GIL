@@ -99,7 +99,7 @@ public static class Parser
                     List<Token> FileTokens;
                     List<string> NamedTokens;
                     (FileTokens, NamedTokens) = LexerTokens.Lexer.Tokenize(program);
-                    Output.GetReusableElements(FileTokens);    //Get all operations and sequences
+                    Output.GetGraphReusableElements(FileTokens);    //Get all operations and sequences
                     break;
                 case LexerTokens.USING:    //Link to specified assembly
                     GetAssembly.Get(tokens[i].Value);
@@ -225,6 +225,11 @@ public class Project
 
     void AddSequence(List<Token> tokens, string name)
     {
+        if (Sequences.ContainsKey(name))
+        {
+            return;
+        }
+
         Project InSequence = new Project() {Tokens = tokens, Sequences = this.Sequences, Target = this.Target};
         
         Sequences.Add(name, new RelativeFeature(Compiler.ExecutingCompiler.CompileGB(InSequence, "")));
@@ -232,6 +237,11 @@ public class Project
 
     void AddOp(List<Token> tokens, string name)
     {
+        if (Operations.ContainsKey(name))
+        {
+            return;
+        }
+
         List<List<Token>> Feats = new List<List<Token>>() {
             new List<Token>()
         };
@@ -249,14 +259,15 @@ public class Project
                     break;
             }
         }
-        
         RelativeFeature[] RelativeFeatures = new RelativeFeature[Feats.Count];
         for (int i = 0; i < Feats.Count; i++)
         {
-            Project InSequence = new Project() {Tokens = Feats[i], Sequences = this.Sequences, Target = this.Target};
+            Project InSequence = new Project() {Tokens = Feats[i], Sequences = this.Sequences, 
+                Operations = this.Operations, Target = this.Target};
             
             RelativeFeatures[i] = new RelativeFeature(Compiler.ExecutingCompiler.CompileGB(InSequence, ""));
         }
+        
         Operations.Add(name, RelativeFeatures);
     }
 
@@ -278,8 +289,9 @@ public class Project
                 case LexerTokens.DEFINESEQUENCE:
                     DefineSequence:
                     List<Token> InsideTokens;
+                    string SeqName = tokens[i].Value;
                     (i, InsideTokens) = GetInsideTokens(tokens, i);
-                    ReusableElements.Add(tokens[i].Value, InsideTokens);
+                    ReusableElements.Add(SeqName, InsideTokens);
                     break;
                 default:
                     break;
@@ -288,7 +300,32 @@ public class Project
         
         foreach (KeyValuePair<string, List<Token>> RE in ReusableElements)
         {
-            
+            AddElement(RE.Key, RE.Value, ref ReusableElements);
+        }   
+    }
+
+    void AddElement(string Name, List<Token> InsideTokens, ref Dictionary<string, List<Token>> ReusableElements)
+    {
+        foreach (Token t in InsideTokens)
+        {
+            if (t.TokenType == LexerTokens.CALLOP || 
+                (t.TokenType == LexerTokens.IDENT && !LexerTokens.ReservedNames.Contains(t.Value)))
+            {
+                
+                if (!ReusableElements.ContainsKey(t.Value))
+                {
+                    HelperFunctions.WriteError($"Name \"{t.Value}\" is not defined");
+                }
+                AddElement(t.Value, ReusableElements[t.Value], ref ReusableElements);
+            }
+        }
+        
+        if (InsideTokens[0].TokenType == LexerTokens.DEFINESEQUENCE)
+        {
+            AddSequence(InsideTokens, Name);
+        } else
+        {
+            AddOp(InsideTokens, Name);
         }
     }
 }

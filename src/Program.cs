@@ -1,12 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace GIL
 {
     class Program
     {
-        public const string Version = "0.3.0";
+        public const string Version = "0.3.1";
         public static string DataPath;    //Path to directory with binaries
         public static string Target = "";
         public static CodonEncoding CurrentEncoding;
@@ -28,7 +30,7 @@ namespace GIL
                 case "new":    //create new GIL file
                     New(args);
                     break;
-                case "test":
+                case "debug":
                     Test(args);
                     break;
                 case "build-pathway":
@@ -89,7 +91,119 @@ namespace GIL
         
         static void Test(string[] args)    //just for testing
         {
-            
+            Console.Clear();
+            Console.Write(DebugMenu);
+
+            switch (Console.ReadLine())
+            {
+                case "1":
+                    Tokenize(args);
+                    break;
+                case "2":
+                    Parse(args);
+                    break;
+                case "3":
+                    TestFeature(args);
+                    break;
+                default:
+                    break;
+            }
         }
+
+        public const string DebugMenu = @"
+        GIL Debug Menu        
+
+Options: 
+[1]Tokenize - Tokenizes GIL file and outputs tokens to console
+[2]Parse - Tokenizes and parses GIL file and outputs tokens to console
+[3]Test feature - Executes TestFeature method in Program.cs, used for testing unfinished features
+
+";
+    
+        static void TestFeature(string[] args)
+        {
+
+        }
+
+        static void Tokenize(string[] args)
+        {
+            Console.Clear();
+            string FilePath = "";
+            if (args.Length > 1)
+            {
+                if (args[1].Contains(':'))    //If it's a full path to file
+                {
+                    Console.WriteLine("Compiling GIL file at " + args[1]);
+                    FilePath = args[1];
+                } else    //relative path
+                {
+                    FilePath = Environment.CurrentDirectory + "\\" + args[1];
+                    Console.WriteLine("Compiling GIL file at " + FilePath);
+                }
+            } else
+            {
+                var Files = Directory.GetFiles(Environment.CurrentDirectory, "*.gil");    //compile first .gil file in directory
+                if (Files.Length == 0)
+                {
+                    HelperFunctions.WriteError("Error GIL03: No GIL project (.gil) in current directory");
+                } else 
+                {
+                    Console.WriteLine("Compiling " + Files[0]);
+                    FilePath = Files[0];
+                }
+            }
+
+            string program = File.ReadAllText(FilePath).Replace("\r", "").Replace("    ", "\t").Replace("\t", "");
+            List<Token> FileTokens;
+            List<string> NamedTokens;
+            (FileTokens, NamedTokens) = LexerTokens.Lexer.Tokenize(program);
+            
+            foreach (Token t in FileTokens)
+            {
+                Console.WriteLine(t);
+            }
+        }
+
+        static void Parse(string[] args)
+        {
+            Console.Clear();
+            string FilePath = "";
+            if (args.Length > 1)
+            {
+                if (args[1].Contains(':'))    //If it's a full path to file
+                {
+                    Console.WriteLine("Compiling GIL file at " + args[1]);
+                    FilePath = args[1];
+                } else    //relative path
+                {
+                    FilePath = Environment.CurrentDirectory + "\\" + args[1];
+                    Console.WriteLine("Compiling GIL file at " + FilePath);
+                }
+            } else
+            {
+                var Files = Directory.GetFiles(Environment.CurrentDirectory, "*.gil");    //compile first .gil file in directory
+                if (Files.Length == 0)
+                {
+                    HelperFunctions.WriteError("Error GIL03: No GIL project (.gil) in current directory");
+                } else 
+                {
+                    Console.WriteLine("Compiling " + Files[0]);
+                    FilePath = Files[0];
+                }
+            }
+
+            string program = File.ReadAllText(FilePath).Replace("\r", "").Replace("    ", "\t").Replace("\t", "");
+            List<Token> FileTokens;
+            List<string> NamedTokens;
+            (FileTokens, NamedTokens) = LexerTokens.Lexer.Tokenize(program);
+            
+            Project CurrentProject = Parser.Parse(FileTokens, NamedTokens);
+
+            foreach (Token t in CurrentProject.Tokens)
+            {
+                Console.WriteLine(t);
+            }
+        }
+
     }
 }
