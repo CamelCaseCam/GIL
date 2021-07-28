@@ -8,10 +8,14 @@ namespace GIL
 {
     class Program
     {
-        public const string Version = "0.3.1";
+        public const string Version = "0.4.0";
         public static string DataPath;    //Path to directory with binaries
         public static string Target = "";
         public static CodonEncoding CurrentEncoding;
+        public static bool StepThrough = false;
+
+        //Global attributes - changed with #SetAttribute name:value
+        public static int RNAI_Len = 30;
 
         static void Main(string[] args)
         {
@@ -103,7 +107,15 @@ namespace GIL
                     Parse(args);
                     break;
                 case "3":
+                    StepThrough = true;
+                    Test(args);
+                    break;
+                case "4":
                     TestFeature(args);
+                    break;
+                case "5":
+                    string ArgString = Console.ReadLine();
+                    Main(HelperFunctions.GetArgs(ArgString));
                     break;
                 default:
                     break;
@@ -116,13 +128,15 @@ namespace GIL
 Options: 
 [1]Tokenize - Tokenizes GIL file and outputs tokens to console
 [2]Parse - Tokenizes and parses GIL file and outputs tokens to console
-[3]Test feature - Executes TestFeature method in Program.cs, used for testing unfinished features
+[3]Debug - Steps through each token's execution
+[4]Test feature - Executes TestFeature method in Program.cs, used for testing unfinished features
+[5]Exit - Exits debug menu and provides a prompt to enter new arguments
 
 ";
     
         static void TestFeature(string[] args)
         {
-
+            Console.WriteLine(HelperFunctions.GetComplement(Console.ReadLine()));
         }
 
         static void Tokenize(string[] args)
@@ -204,6 +218,5 @@ Options:
                 Console.WriteLine(t);
             }
         }
-
     }
 }

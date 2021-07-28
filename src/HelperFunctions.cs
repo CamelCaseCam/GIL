@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Collections.Generic;
 
 public static class HelperFunctions
@@ -55,5 +56,77 @@ public static class HelperFunctions
             }
         }
         return Tokens.Length;
+    }
+
+    public static string[] GetArgs(string line)
+    {
+        List<string> Output = new List<string>();
+        bool InQuotes = false;
+
+        string CurrentString = "";
+        for (int i = 0; i < line.Length; i++)
+        {
+            switch (line[i])
+            {
+                case ' ':
+                    if (InQuotes)
+                    {
+                        CurrentString += " ";
+                        break;
+                    }
+                    Output.Add(CurrentString);
+                    CurrentString = "";
+                    break;
+                case '"':
+                    if (InQuotes)
+                    {
+                        InQuotes = false;
+                        Output.Add(CurrentString);
+                        CurrentString = "";
+                        i += 1;
+                        break;
+                    }
+                    InQuotes = true;
+                    break;
+                default:
+                    CurrentString += line[i];
+                    break;
+            }
+        }
+        if (CurrentString != "")
+        {
+            Output.Add(CurrentString);
+        }
+        return Output.ToArray();
+    }
+
+    public static string GetComplement(string DNA)
+    {
+        StringBuilder Complement = new StringBuilder("", DNA.Length);
+        foreach (char c in DNA.ToLower())
+        {
+            switch (c)
+            {
+                case 'a':
+                    Complement.Append("t");
+                    break;
+                case 't':
+                    Complement.Append("a");
+                    break;
+                case 'g':
+                    Complement.Append("c");
+                    break;
+                case 'c':
+                    Complement.Append("g");
+                    break;
+                case 'u':
+                    Complement.Append('a');
+                    break;
+                default:
+                    HelperFunctions.WriteError($"Error GIL07: Illegal character '{c}' in complement");
+                    break;
+            }
+        }
+        return Complement.ToString();
     }
 }

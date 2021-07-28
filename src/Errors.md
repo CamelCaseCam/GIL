@@ -21,4 +21,20 @@ Gil compile couldn't find a .gil file
 * Error GIL05: End token ("}") expected
 * Error GIL06: The name "Name" does not exist
 
-You referenced a sequence or operation that does not exist. If you're referencing a sequence inside another sequence or an operation inside another operation, make sure that the sequence or operation was already declaired
+You referenced a sequence or operation that does not exist. 
+
+* Error GIL07: Illegal character 'char' in complement
+
+GIL tried to find the complement of a string containing letters other than a, t, c, g, and u. If you're developing a library, this might have been caused by calling HelperFunctions.GetComplement() on a string that isn't DNA or RNA.
+
+* Error GIL08: Attribute "attribute" requires value of type "type"
+
+You tried to set an attribute to an unsupported type. For example, you tried to set RNAI_Len to 'a' or to 1.1
+
+* Error GIL09: Attribute "attribute" does not exist
+
+You used "#SetAttribute Attribute:Value" on an attribute that does not exist. Check your spelling and if the attribute is spelled right, add an issue on the GitHub (I might have forgot to add the attribute)
+
+* Error GIL10: Unable to find siRNA matching given params
+
+GIL was unable to find a siRNA that satisfies all the paramaters in Block

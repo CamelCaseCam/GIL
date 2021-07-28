@@ -19,6 +19,34 @@ public static class Parser
                 case LexerTokens.SETTARGET:    //sets target organism. In the future, I'll add support for multiple targets
                     Output.Target = tokens[i].Value;
                     break;
+                case LexerTokens.SETATTR:
+                    string[] AttrAndVal = tokens[i].Value.Split(':');
+                    Console.WriteLine(AttrAndVal[1]);
+                    switch (AttrAndVal[0])
+                    {
+                        case "RNAI_Len":
+                            if (GIL.Program.StepThrough)
+                            {
+                                Console.WriteLine($"Setting attribute \"RNAI_Len\" to {AttrAndVal[1]}");
+                            }
+                            try
+                            {
+                                GIL.Program.RNAI_Len = int.Parse(AttrAndVal[1]);
+                            } catch (Exception e)
+                            {
+                                if (GIL.Program.StepThrough)
+                                {
+                                    Console.WriteLine($"Failed to parse {AttrAndVal[1]} to type int with the following exception:\n");
+                                    HelperFunctions.WriteError(e.ToString());
+                                }
+                                HelperFunctions.WriteError($"Error GIL08: Attribute \"{AttrAndVal[0]}\" requires value of type int");
+                            }
+                            break;
+                        default:
+                            HelperFunctions.WriteError("Error GIL09: Attribute \"{AttrAndVal}\" does not exist");
+                            break;
+                    }
+                    break;
                 case LexerTokens.COMMENT:
                     //Do nothing since it's a comment
                     break;
@@ -62,6 +90,35 @@ public static class Parser
                     break;
                 case LexerTokens.SETTARGET:
                     Output.Target = tokens[i].Value;
+                    break;
+                case LexerTokens.SETATTR:
+                    string[] AttrAndVal = tokens[i].Value.Split(':');
+                    switch (AttrAndVal[0])
+                    {
+                        case "RNAI_Len":
+                            if (GIL.Program.StepThrough)
+                            {
+                                Console.Clear();
+                                Console.WriteLine($"Setting attribute \"RNAI_Len\" to {AttrAndVal[1]}");
+                                Console.ReadLine();
+                            }
+                            try
+                            {
+                                GIL.Program.RNAI_Len = int.Parse(AttrAndVal[1]);
+                            } catch (Exception e)
+                            {
+                                if (GIL.Program.StepThrough)
+                                {
+                                    Console.WriteLine($"Failed to parse {AttrAndVal[1]} to type int with the following exception:");
+                                    HelperFunctions.WriteError(e.ToString());
+                                }
+                                HelperFunctions.WriteError($"Error GIL08: Attribute \"{AttrAndVal[0]}\" requires value of type int");
+                            }
+                            break;
+                        default:
+                            HelperFunctions.WriteError("Error GIL09: Attribute \"{AttrAndVal}\" does not exist");
+                            break;
+                    }
                     break;
                 case LexerTokens.IDENT:
                     Output.Tokens.Add(tokens[i]);

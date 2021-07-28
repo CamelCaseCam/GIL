@@ -2,6 +2,7 @@
 
 public class RelativeFeature
 {
+    public static readonly RelativeFeature Empty = new RelativeFeature(new Feature[] {}, "");
     public Feature[] Features;
     public string DNA;
 

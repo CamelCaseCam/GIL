@@ -27,6 +27,13 @@ public class Compiler
         for (int i = 0; i < CurrentProject.Tokens.Count; i++)
         {
             Token CurrentToken = CurrentProject.Tokens[i];
+            if (GIL.Program.StepThrough)
+            {
+                Console.Clear();
+                Console.WriteLine(CurrentToken);
+                Console.WriteLine("Press enter to continue");
+                Console.ReadLine();
+            }
             switch (CurrentToken.TokenType)
             {
                 case LexerTokens.CODON:
@@ -84,6 +91,13 @@ public class Compiler
         for (int i = 0; i < CurrentProject.Tokens.Count; i++)
         {
             Token CurrentToken = CurrentProject.Tokens[i];
+            if (GIL.Program.StepThrough)
+            {
+                Console.Clear();
+                Console.WriteLine(CurrentToken);
+                Console.WriteLine("Press enter to continue");
+                Console.ReadLine();
+            }
             switch (CurrentToken.TokenType)
             {
                 case LexerTokens.CODON:
@@ -171,6 +185,45 @@ public class Compiler
                         code += CurrentEncoding.GetLetter(c);
                     }
                     break;
+                case LexerTokens.FROM:
+                    (i, InsideTokens) = CurrentProject.GetInsideTokens(CurrentProject.Tokens.ToArray(), i + 1);
+                    Project Inside = CurrentProject.Copy();
+                    Inside.Tokens = InsideTokens;
+
+                    string Output = Translate.TranslateFrom(CompileGB(Inside, "").Bases, CurrentToken.Value);
+                    code += Output;
+                    break;
+                case LexerTokens.FOR:
+                    (i, InsideTokens) = CurrentProject.GetInsideTokens(CurrentProject.Tokens.ToArray(), i + 1);
+                    Inside = CurrentProject.Copy();
+                    Inside.Tokens = InsideTokens;
+
+                    Output = Translate.TranslateTo(CompileGB(Inside, "").Bases, CurrentToken.Value);
+                    code += Output;
+                    break;
+                case LexerTokens.BLOCK:
+                    (i, InsideTokens) = CurrentProject.GetInsideTokens(CurrentProject.Tokens.ToArray(), i + 1);
+                    DNABlock[] blocks = ParseBlock.Parse(InsideTokens, CurrentProject);
+                    List<string> add = new List<string>();
+                    List<string> sub = new List<string>();
+                    foreach (DNABlock db in blocks)
+                    {
+                        if (db.BlockType == "add")
+                        {
+                            add.Add(db.DNA);
+                        } else
+                        {
+                            sub.Add(db.DNA);
+                        }
+                    }
+                    string[] Candidates = RNAIFuncs.GetOverlap(add.ToArray(), GIL.Program.RNAI_Len);
+                    string siRNA = RNAIFuncs.ExcludeOverlaps(Candidates, sub.ToArray());
+                    if (siRNA == "")
+                    {
+                        HelperFunctions.WriteError("Error GIL10: Unable to find siRNA matching given params");
+                    }
+                    code += HelperFunctions.GetComplement(siRNA);
+                    break;
                 case LexerTokens.BEGINREGION:
                     InProgressFeatures.Push(new Feature(CurrentToken.Value, code.Length + 1, -1));
                     break;
@@ -203,6 +256,11 @@ public class Compiler
                 default:
                     break;
             }
+        }
+
+        if (GIL.Program.StepThrough)
+        {
+            Console.WriteLine("Compilation complete");
         }
         return new GBSequence() {
             Features = Features.ToArray(),
