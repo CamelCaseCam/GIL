@@ -11,6 +11,8 @@ GIL is a collection of tools designed to simplify genetic engineering.
 
 Features
 --------
+* Allows user-created libraries to avoid rewriting code
+* Automatically generates siRNAs for RNAi
 * Converts a sequence of amino acids to a DNA sequence optimized for the target organism
 * Converts a DNA sequence between two different organisms
 
@@ -41,18 +43,16 @@ Option 2: Just download the compiled folder
 -------------------------------------------
 Download the Compiled folder if on windows. If you're on another platform, you'll have to compile the source code for your OS.
 
-I recommend adding the bin\Debug\net5.0 folder to PATH so you can access the GIL compiler from anywhere. You'll need to restart VSCode for this to work.
+I recommend adding the bin\\Debug\\net5.0 folder to PATH so you can access the GIL compiler from anywhere. You'll need to restart VSCode for this to work.
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
    
-   GIL/AminoSequence
-   GIL/Comments
-   GIL/From
-   GIL/Regions
-   GIL/Target organisms
+   GIL/GIL
+
+   Libraries/Libs
    What I'm working on
 
 

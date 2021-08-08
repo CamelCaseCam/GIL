@@ -15,7 +15,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="AminoSequence" href="GIL/AminoSequence.html" />
+    <link rel="next" title="GIL" href="GIL/GIL.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -39,6 +39,8 @@
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
+<li><p>Allows user-created libraries to avoid rewriting code</p></li>
+<li><p>Automatically generates siRNAs for RNAi</p></li>
 <li><p>Converts a sequence of amino acids to a DNA sequence optimized for the target organism</p></li>
 <li><p>Converts a DNA sequence between two different organisms</p></li>
 </ul>
@@ -69,26 +71,70 @@
 <section id="option-2-just-download-the-compiled-folder">
 <h2>Option 2: Just download the compiled folder<a class="headerlink" href="#option-2-just-download-the-compiled-folder" title="Permalink to this headline">¶</a></h2>
 <p>Download the Compiled folder if on windows. If you’re on another platform, you’ll have to compile the source code for your OS.</p>
-<p>I recommend adding the binDebugnet5.0 folder to PATH so you can access the GIL compiler from anywhere. You’ll need to restart VSCode for this to work.</p>
+<p>I recommend adding the bin\Debug\net5.0 folder to PATH so you can access the GIL compiler from anywhere. You’ll need to restart VSCode for this to work.</p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="GIL/AminoSequence.html">AminoSequence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/Comments.html">Comments in GIL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/From.html">From keyword</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/Regions.html">Regions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="GIL/Regions.html#capitalization">Capitalization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="GIL/Regions.html#nesting">Nesting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GIL/GIL.html">GIL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="GIL/AminoSequence.html">AminoSequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/Block.html">RNAi in GIL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/Comments.html">Comments in GIL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/Error%20messages.html">Error messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/Error%20messages.html#errors">Errors:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/For.html">For keyword</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/From.html">From keyword</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/Operations.html">Operation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="GIL/Operations.html#calling-operations">Calling Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GIL/Operations.html#creating-operations">Creating Operations</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/Target%20organisms.html">Target organisms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/Target%20organisms.html#organism-names">Organism names</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="GIL/Target%20organisms.html#saccharomyces-cerevisiae">Saccharomyces Cerevisiae</a></li>
-<li class="toctree-l2"><a class="reference internal" href="GIL/Target%20organisms.html#pichia">Pichia</a></li>
-<li class="toctree-l2"><a class="reference internal" href="GIL/Target%20organisms.html#e-coli">E.Coli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/Regions.html">Regions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="GIL/Regions.html#capitalization">Capitalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GIL/Regions.html#nesting">Nesting</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/Target%20organisms.html#adding-support-for-other-organisms">Adding support for other organisms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/Sequence.html">Sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/Target%20organisms.html">Target organisms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/Target%20organisms.html#organism-names">Organism names</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="GIL/Target%20organisms.html#saccharomyces-cerevisiae">Saccharomyces Cerevisiae</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GIL/Target%20organisms.html#pichia">Pichia</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GIL/Target%20organisms.html#e-coli">E.Coli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GIL/Target%20organisms.html#human">Human</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="GIL/Target%20organisms.html#adding-support-for-other-organisms">Adding support for other organisms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Libraries/Libs.html">Libraries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Libraries/HelperFunctions.html">GIL.HelperFunctions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/HelperFunctions.html#helperfunctions-writewarning-string">HelperFunctions.WriteWarning(string)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/HelperFunctions.html#helperfunctions-writeerror-string">HelperFunctions.WriteError(string)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/HelperFunctions.html#helperfunctions-getend-token-or-list-token-int">HelperFunctions.GetEnd(Token[] or List&lt;Token&gt;, int)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/HelperFunctions.html#helperfunctions-getargs-string">HelperFunctions.GetArgs(string)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/HelperFunctions.html#helperfunctions-getcomplement-string">HelperFunctions.GetComplement(string)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/HelperFunctions.html#helperfunctions-getparams-token-or-list-token">HelperFunctions.GetParams(Token[] or List&lt;Token&gt;)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/HelperFunctions.html#helperfunctions-getaminos-token">HelperFunctions.GetAminos(Token[])</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/HelperFunctions.html#helperfunctions-verifyaminos-string">HelperFunctions.VerifyAminos(string)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/HelperFunctions.html#helperfunctions-aminoletters">HelperFunctions.AminoLetters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Libraries/HelperFunctions.html#params-class">Params class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/HelperFunctions.html#params-add-string-name-string-value">Params.Add(string Name, string Value)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/HelperFunctions.html#params-get-name-throwonfail-false-errormessage">Params.Get(Name, ThrowOnFail = false, ErrorMessage = “”)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Libraries/Import.html">Importing other GIL files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Libraries/Using.html">Linking to outside dlls</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/Using.html#writing-outside-dlls">Writing outside dlls</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Libraries/std/std.html">GIL standard library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/std/Colour/Colour.html">Colour</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Libraries/std/utils.html">utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="What%20I%27m%20working%20on.html">What I’m working on</a></li>
 </ul>
 </div>
@@ -121,13 +167,8 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="GIL/AminoSequence.html">AminoSequence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/Comments.html">Comments in GIL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/From.html">From keyword</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/Regions.html">Regions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/Target%20organisms.html">Target organisms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/Target%20organisms.html#organism-names">Organism names</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GIL/Target%20organisms.html#adding-support-for-other-organisms">Adding support for other organisms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GIL/GIL.html">GIL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Libraries/Libs.html">Libraries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="What%20I%27m%20working%20on.html">What I’m working on</a></li>
 </ul>
 
@@ -135,7 +176,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
-      <li>Next: <a href="GIL/AminoSequence.html" title="next chapter">AminoSequence</a></li>
+      <li>Next: <a href="GIL/GIL.html" title="next chapter">GIL</a></li>
   </ul></li>
 </ul>
 </div>
