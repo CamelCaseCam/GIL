@@ -109,7 +109,7 @@ public class TokenPattern
 {
     public TokenPattern(string exp, string val)
     {
-        expression = new Regex(exp);
+        expression = new Regex(exp, RegexOptions.Compiled);
         Value = val;
     }
     public Regex expression;

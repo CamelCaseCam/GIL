@@ -129,4 +129,108 @@ public static class HelperFunctions
         }
         return Complement.ToString();
     }
+
+    public static (Token[], Params) GetParams(List<Token> Tokens)
+    {
+        return GetParams(Tokens.ToArray());
+    }
+
+    public static (Token[], Params) GetParams(Token[] Tokens)
+    {
+        List<Token> OutputTokens = new List<Token>();
+        Params OutputParams = new Params();
+
+        foreach (Token token in Tokens)
+        {
+            switch (token.TokenType)
+            {
+                case LexerTokens.PARAM:
+                    string[] Splitted = token.Value.Split(':');
+                    OutputParams.Add(Splitted[0], Splitted[1]);
+                    break;
+                default:
+                    OutputTokens.Add(token);
+                    break;
+            }
+        }
+        return (OutputTokens.ToArray(), OutputParams);
+    }
+
+    public static string GetAminos(Token[] Tokens, bool Unsafe = false)
+    {
+        string Output = "";
+        foreach (Token t in Tokens)
+        {
+            if (t.TokenType == LexerTokens.IDENT)
+            {
+                if (!Unsafe)
+                {
+                    VerifyAminos(t.Value);
+                }
+                Output += t.Value;
+            }
+        }
+        return Output;
+    }
+    
+    public static void VerifyAminos(string Sequence)
+    {
+        string IncorrectChars = "";
+        foreach (char c in Sequence)
+        {
+            if (!AminoLetters.Contains(c))
+            {
+                IncorrectChars += $"{c} ";
+            }
+        }
+
+        if (IncorrectChars != "")
+        {
+            WriteError($"Error GIL11: Sequence contained the following non amino acid characters:\n{IncorrectChars}");
+        }
+    }
+
+
+
+
+
+    public static List<char> AminoLetters = new List<char>(){
+        'g', 'a', 'v', 'l', 'i', 'm', 'p', 'f', 'w', 's', 't', 'n', 'q', 'y', 'c', 'k', 'r', 'h', 'd', 'e', 'x',
+        'G', 'A', 'V', 'L', 'I', 'M', 'P', 'F', 'W', 'S', 'T', 'N', 'Q', 'Y', 'C', 'K', 'R', 'H', 'D', 'E', 'X'
+    };
+}
+
+public class Params
+{
+    private Dictionary<string, string> Param2Value = new Dictionary<string, string>();
+
+    public void Add(string Param, string Value)
+    {
+        if (Param2Value.ContainsKey(Param))
+        {
+            Param2Value[Param] = Value;
+        } else
+        {
+            Param2Value.Add(Param, Value);
+        }
+    }
+
+    public string Get(string Param, bool ThrowOnFail = false, string ErrorMessage = "")
+    {
+        if (Param2Value.ContainsKey(Param))
+        {
+            return Param2Value[Param];
+        }
+        if (ThrowOnFail)
+        {
+            if (ErrorMessage == "")
+            {
+                HelperFunctions.WriteError($"You must provide a value for parameter \"{Param}\"");
+            } else
+            {
+                HelperFunctions.WriteError(ErrorMessage);
+            }
+        }
+        return "";
+    }
 }

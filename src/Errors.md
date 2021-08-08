@@ -38,3 +38,12 @@ You used "#SetAttribute Attribute:Value" on an attribute that does not exist. Ch
 * Error GIL10: Unable to find siRNA matching given params
 
 GIL was unable to find a siRNA that satisfies all the paramaters in Block
+
+* Error GIL11: Sequence contained the following non amino acid characters:
+
+GIL (or a library you're using/writing) was expecting a sequence of amino acids, but one of the characters wasn't an amino acid. For example, MQPF_R wouldn't work because the _ isn't an amino acid
+
+(Not yet implemented)
+* Error GIL12: Cannot encode sequence bigger than max length (2,147,483,648 chars)
+
+CGIL Files have a planned sequence length of 2,147,483,648 chars. If you're breaking this limit, either you're trying to encode the entire human genome or your compiler is seriously broken. 

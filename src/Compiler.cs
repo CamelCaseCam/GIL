@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -46,6 +47,13 @@ public class Compiler
                     code += CurrentEncoding.GetLetter(CurrentToken.Value[0]);
                     break;
                 case LexerTokens.AMINOSEQUENCE:
+                    if (GIL.Program.StepThrough)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Translating AminoSequence:");
+                        Console.WriteLine(CurrentToken.Value);
+                        Console.ReadLine();
+                    }
                     foreach (char c in CurrentToken.Value)
                     {
                         if (c == '\n' || c == '\r' || c == ' ' || c == '\t')
@@ -176,14 +184,16 @@ public class Compiler
                     Features.Add(OpFeature);
                     break;
                 case LexerTokens.AMINOSEQUENCE:
+                    StringBuilder sb = new StringBuilder("", CurrentToken.Value.Length * 3);
                     foreach (char c in CurrentToken.Value)
                     {
                         if (c == '\n' || c == '\r' || c == ' ' || c == '\t')
                         {
                             continue;
                         }
-                        code += CurrentEncoding.GetLetter(c);
+                        sb.Append(CurrentEncoding.GetLetter(c));
                     }
+                    code += sb.ToString();
                     break;
                 case LexerTokens.FROM:
                     (i, InsideTokens) = CurrentProject.GetInsideTokens(CurrentProject.Tokens.ToArray(), i + 1);

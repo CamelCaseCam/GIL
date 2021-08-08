@@ -22,6 +22,7 @@ public static class LexerTokens
     public const string COMMENT = "COMMENT";
     public const string ENTRYPOINT = "ENTRYPOINT";
     public const string SETATTR = "SETATTR";
+    public const string PARAM = "PARAM";
 
     //Metadata
     public const string SETTARGET = "SETTARGET";
@@ -66,6 +67,7 @@ public static class LexerTokens
             (@"(?<=#SetAttribute )[a-zA-Z0-9_-]{1,}:[a-zA-Z0-9\._-]{1,}", SETATTR),
             (@"(?<=#setAttribute )[a-zA-Z0-9_-]{1,}:[a-zA-Z0-9\._-]{1,}", SETATTR),
             (@"(?<=#SetAtr )[a-zA-Z0-9_-]{1,}:[a-zA-Z0-9\._-]{1,}", SETATTR),
+            (@"(?<=\W)(?<!#SetAttribute )(?<!#setAttribute )(?<!#SetAtr )[a-zA-Z0-9_-]{1,}:[a-zA-Z0-9_\-/\\]*", PARAM),
             (@"(?<=sequence )[a-zA-Z0-9@*_-]*", DEFINESEQUENCE),
             (@"(?<=operation )[a-zA-Z0-9@*_-]*", DEFOP),
             (@"(?<=\$)innerCode", INNERCODE),

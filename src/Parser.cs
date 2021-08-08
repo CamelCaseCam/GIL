@@ -58,7 +58,7 @@ public static class Parser
                     if (tokens[i + 1].TokenType == LexerTokens.AMINOSEQUENCE)
                     {
                         Output.Tokens.Add(tokens[i + 1]);
-                        i++;
+                        i += 2;
                         break;
                     }
                     Output.Tokens.Add(tokens[i]);
@@ -134,7 +134,7 @@ public static class Parser
                     if (tokens[i + 1].TokenType == LexerTokens.AMINOSEQUENCE)
                     {
                         Output.Tokens.Add(tokens[i + 1]);
-                        i++;
+                        i += 2;
                     }
                     Output.Tokens.Add(tokens[i]);    //I forgot that I didn't add this line and spent 2 days trying to 
                     break;                           //figure out why operations weren't working
@@ -156,7 +156,8 @@ public static class Parser
                     List<Token> FileTokens;
                     List<string> NamedTokens;
                     (FileTokens, NamedTokens) = LexerTokens.Lexer.Tokenize(program);
-                    Output.GetGraphReusableElements(FileTokens);    //Get all operations and sequences
+                    Output.ImportedFiles.Add(GIL.Program.EntryFilePath);
+                    Output.GetGraphReusableElements(FileTokens, ImportDependencies:true);    //Get all operations and sequences
                     break;
                 case LexerTokens.USING:    //Link to specified assembly
                     GetAssembly.Get(tokens[i].Value);
@@ -175,6 +176,7 @@ public class Project
     public List<Token> Tokens = new List<Token>();
     public Dictionary<string, RelativeFeature> Sequences = new Dictionary<string, RelativeFeature>();
     public Dictionary<string, RelativeFeature[]> Operations = new Dictionary<string, RelativeFeature[]>();
+    public List<string> ImportedFiles = new List<string>();
 
     public int EntryPoint;
     public string Target;
@@ -328,12 +330,12 @@ public class Project
         Operations.Add(name, RelativeFeatures);
     }
 
-    public void GetGraphReusableElements(List<Token> tokens)
+    public void GetGraphReusableElements(List<Token> tokens, bool ImportDependencies = false)
     {
-        GetGraphReusableElements(tokens.ToArray());
+        GetGraphReusableElements(tokens.ToArray(), ImportDependencies:ImportDependencies);
     }
 
-    public void GetGraphReusableElements(Token[] tokens)
+    public void GetGraphReusableElements(Token[] tokens, bool ImportDependencies = false)
     {
         Dictionary<string, List<Token>> ReusableElements = new Dictionary<string, List<Token>>();
 
@@ -349,6 +351,48 @@ public class Project
                     string SeqName = tokens[i].Value;
                     (i, InsideTokens) = GetInsideTokens(tokens, i);
                     ReusableElements.Add(SeqName, InsideTokens);
+                    break;
+                case LexerTokens.IMPORT:
+                    if (ImportDependencies)
+                    {
+                        string LibPath = LibFuncs.GetLibPath(tokens[i].Value);    //find path to file
+                        if (ImportedFiles.Contains(LibPath))    //Check if file has been imported
+                        {
+                            if (GIL.Program.StepThrough)    //If we're stepping through, say that we're skipping the file
+                            {
+                                Console.Clear();
+                                Console.WriteLine($"Skipping importing file \"{LibPath}\" because it has already been imported");
+                                Console.ReadLine();
+                            }
+                            break;
+                        }
+                        ImportedFiles.Add(LibPath);
+
+                        //Get contents of file and tokenize it
+                        string program = File.ReadAllText(LibPath).Replace("\r", "").Replace("    ", "\t").Replace("\t", "");
+                        List<Token> FileTokens;
+                        List<string> NamedTokens;
+                        (FileTokens, NamedTokens) = LexerTokens.Lexer.Tokenize(program);
+                        GetGraphReusableElements(FileTokens, ImportDependencies:true);    //Get all operations and sequences
+                    }
+                    break;
+                case LexerTokens.USING:    //Link to specified assembly
+                    if (ImportDependencies)
+                    {
+                        string LibPath = LibFuncs.GetLibPath(tokens[i].Value, end:"");    //find path to file
+                        if (ImportedFiles.Contains(LibPath))    //Check if file has been imported
+                        {
+                            if (GIL.Program.StepThrough)    //If we're stepping through, say that we're skipping the file
+                            {
+                                Console.Clear();
+                                Console.WriteLine($"Skipping importing file \"{LibPath}\" because it has already been imported");
+                                Console.ReadLine();
+                            }
+                            break;
+                        }
+                        ImportedFiles.Add(LibPath);
+                        GetAssembly.Get(tokens[i].Value);
+                    }
                     break;
                 default:
                     break;

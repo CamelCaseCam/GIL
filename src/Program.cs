@@ -6,13 +6,14 @@ using System.Collections.Generic;
 
 namespace GIL
 {
-    class Program
+    public class Program
     {
-        public const string Version = "0.4.0";
+        public const string Version = "0.4.0-dev3";
         public static string DataPath;    //Path to directory with binaries
         public static string Target = "";
         public static CodonEncoding CurrentEncoding;
         public static bool StepThrough = false;
+        public static string EntryFilePath;
 
         //Global attributes - changed with #SetAttribute name:value
         public static int RNAI_Len = 30;
@@ -53,11 +54,20 @@ namespace GIL
                 if (args[1].Contains(':'))    //If it's a full path to file
                 {
                     Console.WriteLine("Compiling GIL file at " + args[1]);
+                    EntryFilePath = args[1];
                     new Compiler().Compile(args[1]);
                 } else    //relative path
                 {
-                    string Path = Environment.CurrentDirectory + "\\" + args[1];
+                    string Path;
+                    if (args[1][0] == '.')
+                    {
+                        Path = Environment.CurrentDirectory + "\\" + args[1].Substring(1, args[1].Length - 1);
+                    } else
+                    {
+                        Path = Environment.CurrentDirectory + "\\" + args[1];
+                    }
                     Console.WriteLine("Compiling GIL file at " + Path);
+                    EntryFilePath = Path;
                     new Compiler().Compile(Path);
                 }
                 return;
@@ -73,7 +83,7 @@ namespace GIL
             }
         }
 
-        static void New(string[] args)    //wip
+        static void New(string[] args)
         {
             if (args.Length < 2)
             {
@@ -136,7 +146,8 @@ Options:
     
         static void TestFeature(string[] args)
         {
-            Console.WriteLine(HelperFunctions.GetComplement(Console.ReadLine()));
+            byte[] bytes = DNA2Bytes.ToBytes(Console.ReadLine());
+            Console.WriteLine(DNA2Bytes.FromBytes(bytes));
         }
 
         static void Tokenize(string[] args)
