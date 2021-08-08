@@ -3,6 +3,8 @@ A collection of tools designed to simplify genetic engineering
 **This is still early in development, the future of this project is unknown and built versions may be unstable**. 
 If you want to contribute or see a preview of upcoming releases, check out the developer branch. 
 
+We've got documentation! Check it out at https://geneticil.readthedocs.io/en/latest/
+
 Features:
 * Converts a sequence of amino acids to a DNA sequence optimized for the target organism
 
