@@ -5,25 +5,38 @@ If you want to contribute or see a preview of upcoming releases, check out the d
 
 We've got documentation! Check it out at https://geneticil.readthedocs.io/en/latest/
 
-Features:
+Features
+--------
+* Allows user-created libraries to avoid rewriting code
+* Automatically generates siRNAs for RNAi
 * Converts a sequence of amino acids to a DNA sequence optimized for the target organism
+* Converts a DNA sequence between two different organisms
 
-Features currently in development:
-* Automatically generates RNAi to block specified metabolic pathways in the target organism (80% done)
-* Multiple optimization settings to control which genes get blocked (not started)
+Contribute
+----------
+- Issue Tracker: https://github.com/CamelCaseCam/GIL/issues
+- Source Code: https://github.com/CamelCaseCam/GIL
 
-Planned features:
-* User-created libraries
+To see the latest features, check out the developer branch on github
 
-# How to use it
-## Option 1: bulding from source
+Support
+-------
+If you're having problems, create an issue on github and/or email me at CamKDev@gmail.com
+
+License
+-------
+GIL is licensed under the GNU GPL-3.0 license. 
+
+
+
+Installation
+============
+Option 1: bulding from source
+-----------------------------
 Download the source code and use .net 5.0 to build.
-Copy the CompilationTargets and Templates folders into the bin\Debug\net5.0 folder.
 
-I reccomend adding the bin\Debug\net5.0 folder to PATH so you can access the GIL compiler from anywhere. You'll need to restart VSCode for this to work. 
+Option 2: Just download the compiled folder
+-------------------------------------------
+Download the Compiled folder if on windows. If you're on another platform, you'll have to compile the source code for your OS.
 
-### Commands:
-* compile - compiles the .gil file with the same name as the current directory (not fully implemented)
-* new - creates a new GIL project
-* build-pathway - converts a textual representation of a metabolic pathway into serialized Pathway object to reduce performance cost with large pathways
-* test - used for testing, will be removed later
+I recommend adding the bin\\Debug\\net5.0 folder to PATH so you can access the GIL compiler from anywhere. You'll need to restart VSCode for this to work.
